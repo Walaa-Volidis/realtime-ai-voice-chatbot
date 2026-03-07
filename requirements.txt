@@ -1,0 +1,8 @@
+moshi>=0.2.11
+fastapi
+sphn
+huggingface_hub
+torch
+numpy
+sentencepiece
+modal>=1.2.1
