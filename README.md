@@ -105,37 +105,6 @@ Weights are cached in a **Modal Volume** (`model_cache`), so subsequent cold sta
 
 ---
 
-## 📁 Project Structure
-
-```
-realtime-ai-voice-chatbot/
-├── backend/
-│   ├── app.py                  # Modal function — serves static frontend via FastAPI
-│   ├── common.py               # Shared Modal App instance
-│   ├── moshi_service.py        # GPU class — model loading, WebSocket audio pipeline
-│   ├── requirements.txt        # Python dependencies
-│   └── pyproject.toml          # Project metadata
-├── frontend/
-│   ├── src/
-│   │   ├── app/
-│   │   │   ├── page.tsx            # Main voice chat page
-│   │   │   ├── layout.tsx          # Root layout + fonts
-│   │   │   └── globals.css         # Global styles, dark theme, scrollbar
-│   │   ├── components/
-│   │   │   ├── MicButton.tsx           # Animated mic toggle + ripple rings
-│   │   │   ├── AudioVisualizer.tsx     # Equalizer bar animation
-│   │   │   ├── StatusBadge.tsx         # Connection status with pulse dot
-│   │   │   └── Transcript.tsx          # Auto-scrolling live transcript
-│   │   └── hooks/
-│   │       └── useVoiceChat.ts         # Core hook — WS, audio, state management
-│   ├── next.config.ts          # Static export configuration
-│   ├── package.json            # Node.js dependencies
-│   └── out/                    # Built static files (served by Modal)
-└── README.md
-```
-
----
-
 ## 🚀 Quick Start
 
 ### Prerequisites
