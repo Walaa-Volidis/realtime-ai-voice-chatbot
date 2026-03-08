@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import type { ConnectionStatus } from '@/hooks/useVoiceChat';
+import type { ConnectionStatus } from '@/hooks/use-voice-chat';
 
 interface StatusBadgeProps {
   status: ConnectionStatus;

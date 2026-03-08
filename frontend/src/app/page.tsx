@@ -1,6 +1,6 @@
 'use client';
 
-import { useVoiceChat } from '@/hooks/useVoiceChat';
+import { useVoiceChat } from '@/hooks/use-voice-chat';
 import { MicButton } from '@/components/MicButton';
 import { AudioVisualizer } from '@/components/AudioVisualizer';
 import { StatusBadge } from '@/components/StatusBadge';
