@@ -6,7 +6,7 @@ from common import app
 from moshi_service import Moshi
 
 
-frontend = Path(__file__).with_name('frontend')
+frontend = Path(__file__).resolve().parent.parent / 'frontend' / 'out'
 image = (modal.Image.debian_slim(python_version='3.11')
     .pip_install('fastapi')
     .add_local_python_source('common', 'moshi_service')
