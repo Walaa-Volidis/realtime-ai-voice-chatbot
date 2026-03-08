@@ -29,42 +29,6 @@ A full-duplex, real-time voice conversation app powered by Moshi, served on serv
 
 ---
 
-## 🏗️ Architecture
-
-```
-                        🌐 Browser (Next.js)
-               ┌──────────────────────────────────────┐
-               │                                      │
-               │   🎤 Mic                                │
-               │    └─► Opus Recorder (Web Worker)    │
-               │         └─► WebSocket ──────────────────────┐
-               │                                      │     │
-               │   🔊 Speaker                            │     │
-               │    ◄── Web Audio API                 │     │
-               │         ◄── ogg-opus-decoder         │     │
-               │              ◄── WebSocket ◄────────────┐  │
-               │                                      │  │  │
-               │   📝 Transcript                        │  │  │
-               │    ◄── TextDecoder ◄── WebSocket ◄──────┤  │
-               └──────────────────────────────────────┘  │  │
-                                                         │  │
-                        ⚙️ Modal (Serverless GPU)          │  │
-               ┌──────────────────────────────────────┐  │  │
-               │                                      │  │  │
-               │   Opus bytes in ◄───────────────────────┘  │
-               │    └─► sphn.OpusStreamReader          │     │
-               │         └─► PCM buffer                │     │
-               │              └─► Mimi Encoder         │     │
-               │                   └─► Moshi LM        │     │
-               │                        └─► Mimi Decoder│    │
-               │                             └─► sphn   │    │
-               │                                  └─────────►┘
-               │                                      │
-               │   🤗 Weights from Hugging Face         │
-               │   💾 Cached in Modal Volume             │
-               └──────────────────────────────────────┘
-```
-
 ### WebSocket Protocol
 
 ```
