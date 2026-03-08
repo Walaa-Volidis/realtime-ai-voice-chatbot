@@ -1,214 +1,270 @@
-# Real-Time AI Voice Chatbot
+<div align="center">
 
-A full-stack, real-time voice conversation application that lets you have natural spoken conversations with an AI. Built with [Moshi](https://github.com/kyutai-labs/moshi) (Kyutai's speech-to-speech model), deployed serverlessly on [Modal](https://modal.com) with GPU acceleration, and powered by model weights hosted on [Hugging Face](https://huggingface.co/).
+# 🎙️ Real-Time AI Voice Chatbot
 
-Speak into your microphone and receive instant AI voice responses alongside a live text transcript — all streamed in real-time over WebSockets.
+**Talk to an AI that talks back — instantly.**
 
----
+A full-duplex, real-time voice conversation app powered by Moshi, served on serverless GPUs via Modal, with a buttery-smooth Next.js frontend.
 
-## Demo
+[![License: MIT](https://img.shields.io/badge/License-MIT-violet.svg)](LICENSE)
+[![Modal](https://img.shields.io/badge/Deployed%20on-Modal-black?logo=modal&logoColor=white)](https://modal.com)
+[![Hugging Face](https://img.shields.io/badge/Models-Hugging%20Face-yellow?logo=huggingface)](https://huggingface.co/)
+[![Next.js](https://img.shields.io/badge/Frontend-Next.js%2016-black?logo=next.js)](https://nextjs.org/)
+[![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python&logoColor=white)](https://python.org)
 
-1. Open the deployed URL in your browser
-2. Click the mic button to start a conversation
-3. Speak naturally — Moshi listens, understands, and responds with its own voice
-4. Watch the live transcript appear as the AI speaks
+<!-- Add a demo GIF or video here -->
+<!-- ![Demo](assets/demo.gif) -->
 
----
+[Live Demo](#) · [Report Bug](https://github.com/Walaa-Volidis/realtime-ai-voice-chatbot/issues) · [Request Feature](https://github.com/Walaa-Volidis/realtime-ai-voice-chatbot/issues)
 
-## Tech Stack
-
-### Backend
-| Technology | Purpose |
-|---|---|
-| **[Modal](https://modal.com)** | Serverless GPU cloud platform — deploys and scales the AI model on **NVIDIA A10G GPUs** with zero infrastructure management |
-| **[Moshi](https://github.com/kyutai-labs/moshi)** | Kyutai's real-time, full-duplex speech-to-speech language model — handles simultaneous listening and speaking |
-| **[Hugging Face Hub](https://huggingface.co/)** | Hosts and serves the pre-trained Moshi model weights (Mimi encoder, Moshi LM, text tokenizer) — downloaded at container startup via `hf_hub_download` |
-| **[FastAPI](https://fastapi.tiangolo.com/)** | High-performance async web framework — serves the frontend and handles WebSocket connections for bidirectional audio streaming |
-| **[PyTorch](https://pytorch.org/)** | Deep learning framework powering model inference on GPU |
-| **[sphn](https://pypi.org/project/sphn/)** | Low-level Opus audio codec — encodes/decodes audio streams between the browser and model |
-| **[SentencePiece](https://github.com/google/sentencepiece)** | Tokenizer for converting model output tokens into readable text |
-| **[NumPy](https://numpy.org/)** | Audio buffer manipulation and PCM data processing |
-| **Python 3.11** | Runtime environment |
-
-### Frontend
-| Technology | Purpose |
-|---|---|
-| **[Next.js 16](https://nextjs.org/)** | React framework configured for **static export** — generates optimized HTML/JS/CSS served by Modal |
-| **[React 19](https://react.dev/)** | Component-based UI with hooks for state and lifecycle management |
-| **[TypeScript](https://www.typescriptlang.org/)** | Static type checking for reliability and maintainability |
-| **[Tailwind CSS 4](https://tailwindcss.com/)** | Utility-first CSS for rapid, responsive styling with a dark theme |
-| **[Framer Motion](https://www.framer.com/motion/)** | Declarative animations — mic button ripples, visualizer bars, fade-in transitions |
-| **[Opus Recorder](https://github.com/niclasmattsson/opus-recorder)** | Captures browser microphone input and encodes it as Opus audio in a Web Worker |
-| **[ogg-opus-decoder](https://github.com/niclasmattsson/ogg-opus-decoder)** | Decodes incoming Opus audio from the AI for real-time playback via Web Audio API |
+</div>
 
 ---
 
-## Architecture
+## ✨ Features
+
+|     | Feature                       | What it means                                                                                                      |
+| --- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| ⚡  | **Zero-Latency Duplex Audio** | Speak and listen simultaneously — Moshi handles full-duplex conversation, no turn-taking required                  |
+| ☁️  | **Serverless GPU Scaling**    | Runs on NVIDIA A10G GPUs via Modal — scales to zero when idle, spins up on demand. Pay only for what you use       |
+| 🚀  | **Edge-Ready Frontend**       | Static-exported Next.js 16 app — globally fast, no Node.js server needed in production                             |
+| 🧠  | **Hugging Face Model Hub**    | Pre-trained Moshi weights (Mimi codec + LM + tokenizer) pulled directly from Hugging Face, cached in Modal Volumes |
+| 🎨  | **Polished UI**               | Dark theme with Tailwind CSS 4, smooth Framer Motion animations — mic ripples, audio visualizer, live transcript   |
+| 🎶  | **Opus Audio Pipeline**       | Browser-native Opus encoding/decoding via Web Workers for crystal-clear, low-bandwidth voice streaming             |
+
+---
+
+## 🏗️ Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                        Browser (Next.js)                        │
-│                                                                 │
-│  Mic → Opus Recorder → WebSocket ──────────► Modal (Moshi)     │
-│                                                                 │
-│  Speaker ◄── Web Audio ◄── ogg-opus-decoder ◄── WebSocket      │
-│  Transcript ◄── TextDecoder ◄─────────────────── WebSocket     │
-└─────────────────────────────────────────────────────────────────┘
-
-WebSocket Protocol:
-  Client → Server:  raw Opus-encoded audio bytes
-  Server → Client:  [0x01] + Opus audio bytes  (AI voice)
-                    [0x02] + UTF-8 text bytes   (transcript)
+                        🌐 Browser (Next.js)
+               ┌──────────────────────────────────────┐
+               │                                      │
+               │   🎤 Mic                                │
+               │    └─► Opus Recorder (Web Worker)    │
+               │         └─► WebSocket ──────────────────────┐
+               │                                      │     │
+               │   🔊 Speaker                            │     │
+               │    ◄── Web Audio API                 │     │
+               │         ◄── ogg-opus-decoder         │     │
+               │              ◄── WebSocket ◄────────────┐  │
+               │                                      │  │  │
+               │   📝 Transcript                        │  │  │
+               │    ◄── TextDecoder ◄── WebSocket ◄──────┤  │
+               └──────────────────────────────────────┘  │  │
+                                                         │  │
+                        ⚙️ Modal (Serverless GPU)          │  │
+               ┌──────────────────────────────────────┐  │  │
+               │                                      │  │  │
+               │   Opus bytes in ◄───────────────────────┘  │
+               │    └─► sphn.OpusStreamReader          │     │
+               │         └─► PCM buffer                │     │
+               │              └─► Mimi Encoder         │     │
+               │                   └─► Moshi LM        │     │
+               │                        └─► Mimi Decoder│    │
+               │                             └─► sphn   │    │
+               │                                  └─────────►┘
+               │                                      │
+               │   🤗 Weights from Hugging Face         │
+               │   💾 Cached in Modal Volume             │
+               └──────────────────────────────────────┘
 ```
 
-### Data Flow
+### WebSocket Protocol
 
-1. **Audio Capture** — The browser captures microphone input and encodes it as Opus audio using a Web Worker (opus-recorder), sending small frames over WebSocket
-2. **Audio Decoding** — The Modal backend receives Opus bytes, decodes them to PCM using `sphn.OpusStreamReader`, and buffers them into frames
-3. **Model Inference** — Each audio frame is fed through the **Mimi encoder** (converts audio → tokens), then the **Moshi language model** generates response tokens in real-time
-4. **Response Encoding** — Output tokens are decoded back to audio via Mimi, encoded as Opus with `sphn.OpusStreamWriter`, and streamed back alongside text tokens
-5. **Playback** — The frontend decodes Opus audio via ogg-opus-decoder and schedules gapless playback through the Web Audio API while rendering the transcript live
+```
+Client → Server:   raw Opus-encoded audio bytes
+Server → Client:   [0x01] + Opus audio bytes   (AI voice response)
+                   [0x02] + UTF-8 text bytes    (live transcript)
+```
+
+---
+
+## 🔄 Under the Hood — The Moshi + Modal Synergy
+
+This isn't your typical chatbot. Here's what makes it different:
+
+### Full-Duplex Conversation
+
+Most voice assistants follow a **listen → think → respond** cycle. Moshi breaks that pattern — it can **listen and speak at the same time**, just like a real human conversation. There's no wake word, no "processing..." spinner, no awkward silence.
+
+### How the Audio Pipeline Works
+
+1. **🎤 Capture** — Your browser grabs mic input, encodes it as Opus in a Web Worker, and streams tiny frames over WebSocket
+2. **📥 Decode** — The Modal backend receives Opus bytes and decodes them to raw PCM audio using `sphn`
+3. **🧠 Infer** — PCM frames are fed through **Mimi** (neural audio codec from Hugging Face) to produce tokens, then the **Moshi language model** generates response tokens — all in real-time on an A10G GPU
+4. **📤 Encode** — Response audio tokens are decoded back to waveforms via Mimi, re-encoded as Opus, and streamed back with text tokens
+5. **🔊 Play** — The frontend decodes Opus audio and schedules gapless playback via Web Audio API while the transcript renders live
+
+### Why Modal?
+
+- **Zero infrastructure** — No Docker, no Kubernetes, no EC2 instances to manage
+- **GPU on demand** — A10G GPUs spin up in seconds, scale to zero when nobody's talking
+- **Persistent volumes** — Hugging Face model weights are downloaded once and cached forever
+- **Two-function split** — Frontend serves on cheap CPU, model runs on expensive GPU — cost-optimized by design
 
 ### Hugging Face Integration
 
-The Moshi model consists of three components, all downloaded from Hugging Face at container startup:
-- **Mimi** — Neural audio codec (encoder/decoder) that converts between audio waveforms and discrete tokens
-- **Moshi LM** — The core language model that generates response tokens given input audio tokens
-- **Text Tokenizer** — SentencePiece model for converting token IDs to human-readable text
+All model weights are hosted on and downloaded from **Hugging Face Hub** at container startup:
 
-Weights are cached in a **Modal Volume** (`model_cache`) so they persist across container restarts and don't need to be re-downloaded on every cold start.
+| Component          | Description                                                                        |
+| ------------------ | ---------------------------------------------------------------------------------- |
+| **Mimi**           | Neural audio codec — encodes waveforms into discrete tokens and decodes them back  |
+| **Moshi LM**       | The core language model — generates intelligent response tokens from audio input   |
+| **Text Tokenizer** | SentencePiece model — converts token IDs to human-readable text for the transcript |
 
-### Modal Deployment
-
-The app runs as two serverless functions on Modal:
-
-| Function | Resource | Role |
-|---|---|---|
-| `web` | CPU | Serves the Next.js static export (HTML/JS/CSS) via FastAPI |
-| `Moshi.*` | NVIDIA A10G GPU | Runs Moshi model inference with WebSocket streaming |
-
-Both functions scale to zero when idle and spin up on demand — you only pay for actual usage.
+Weights are cached in a **Modal Volume** (`model_cache`), so subsequent cold starts skip the download entirely.
 
 ---
 
-## Project Structure
+## 🛠️ Tech Stack
+
+### Backend
+
+| Technology                                                   | Role                                                          |
+| ------------------------------------------------------------ | ------------------------------------------------------------- |
+| **[Modal](https://modal.com)**                               | Serverless GPU cloud — NVIDIA A10G, auto-scaling, zero config |
+| **[Moshi](https://github.com/kyutai-labs/moshi)**            | Full-duplex speech-to-speech model by Kyutai                  |
+| **[Hugging Face Hub](https://huggingface.co/)**              | Model weight hosting & download via `hf_hub_download`         |
+| **[FastAPI](https://fastapi.tiangolo.com/)**                 | Async WebSocket server + static file serving                  |
+| **[PyTorch](https://pytorch.org/)**                          | GPU-accelerated model inference                               |
+| **[sphn](https://pypi.org/project/sphn/)**                   | Opus audio stream encoding/decoding                           |
+| **[SentencePiece](https://github.com/google/sentencepiece)** | Text tokenization for transcript output                       |
+| **[NumPy](https://numpy.org/)**                              | PCM audio buffer processing                                   |
+| **Python 3.11**                                              | Runtime                                                       |
+
+### Frontend
+
+| Technology                                                                 | Role                                                 |
+| -------------------------------------------------------------------------- | ---------------------------------------------------- |
+| **[Next.js 16](https://nextjs.org/)**                                      | React framework — static export for edge delivery    |
+| **[React 19](https://react.dev/)**                                         | UI with hooks for state & lifecycle                  |
+| **[TypeScript](https://www.typescriptlang.org/)**                          | End-to-end type safety                               |
+| **[Tailwind CSS 4](https://tailwindcss.com/)**                             | Utility-first dark theme styling                     |
+| **[Framer Motion](https://www.framer.com/motion/)**                        | Smooth animations — ripples, visualizer, transitions |
+| **[Opus Recorder](https://github.com/niclasmattsson/opus-recorder)**       | Mic capture → Opus encoding in a Web Worker          |
+| **[ogg-opus-decoder](https://github.com/niclasmattsson/ogg-opus-decoder)** | Decode AI audio for real-time playback               |
+
+---
+
+## 📁 Project Structure
 
 ```
+realtime-ai-voice-chatbot/
 ├── backend/
-│   ├── app.py              # Modal function – serves frontend static files via FastAPI
-│   ├── common.py           # Shared Modal App instance
-│   ├── moshi_service.py    # Modal GPU class – Moshi model loading, WebSocket audio pipeline
-│   ├── requirements.txt    # Python dependencies
-│   └── pyproject.toml      # Project metadata
+│   ├── app.py                  # Modal function — serves static frontend via FastAPI
+│   ├── common.py               # Shared Modal App instance
+│   ├── moshi_service.py        # GPU class — model loading, WebSocket audio pipeline
+│   ├── requirements.txt        # Python dependencies
+│   └── pyproject.toml          # Project metadata
 ├── frontend/
 │   ├── src/
 │   │   ├── app/
-│   │   │   ├── page.tsx        # Main voice chat page with all UI components
-│   │   │   ├── layout.tsx      # Root layout with fonts and metadata
-│   │   │   └── globals.css     # Global styles, dark theme, custom scrollbar
+│   │   │   ├── page.tsx            # Main voice chat page
+│   │   │   ├── layout.tsx          # Root layout + fonts
+│   │   │   └── globals.css         # Global styles, dark theme, scrollbar
 │   │   ├── components/
-│   │   │   ├── MicButton.tsx       # Animated mic toggle with ripple effect
-│   │   │   ├── AudioVisualizer.tsx # Animated equalizer bars (framer-motion)
-│   │   │   ├── StatusBadge.tsx     # Connection status indicator with pulse
-│   │   │   └── Transcript.tsx      # Auto-scrolling live transcript panel
+│   │   │   ├── MicButton.tsx           # Animated mic toggle + ripple rings
+│   │   │   ├── AudioVisualizer.tsx     # Equalizer bar animation
+│   │   │   ├── StatusBadge.tsx         # Connection status with pulse dot
+│   │   │   └── Transcript.tsx          # Auto-scrolling live transcript
 │   │   └── hooks/
-│   │       └── useVoiceChat.ts     # Core hook – WebSocket, audio capture/playback, state
-│   ├── next.config.ts      # Next.js config (static export mode)
-│   ├── package.json        # Node.js dependencies
-│   └── out/                # Generated static build (served by Modal)
+│   │       └── useVoiceChat.ts         # Core hook — WS, audio, state management
+│   ├── next.config.ts          # Static export configuration
+│   ├── package.json            # Node.js dependencies
+│   └── out/                    # Built static files (served by Modal)
 └── README.md
 ```
 
 ---
 
-## Prerequisites
+## 🚀 Quick Start
 
-- **Python 3.11** — recommended via [pyenv](https://github.com/pyenv-win/pyenv-win) (Windows) or [pyenv](https://github.com/pyenv/pyenv) (macOS/Linux)
-- **Node.js 20+** — for building the Next.js frontend
-- **[Modal](https://modal.com) account** — free tier includes $30/month in credits
+### Prerequisites
 
----
+- **Python 3.11** via [pyenv](https://github.com/pyenv-win/pyenv-win) (Windows) or [pyenv](https://github.com/pyenv/pyenv) (macOS/Linux)
+- **Node.js 20+**
+- **[Modal account](https://modal.com)** — free tier includes $30/month in credits
 
-## Setup & Deployment
-
-### 1. Clone the repo
+### 1. Clone & setup backend
 
 ```bash
 git clone https://github.com/Walaa-Volidis/realtime-ai-voice-chatbot.git
-cd realtime-ai-voice-chatbot
-```
+cd realtime-ai-voice-chatbot/backend
 
-### 2. Backend setup
-
-```bash
-cd backend
 python -m venv venv
-
-# Activate virtual environment
-venv\Scripts\Activate.ps1      # Windows PowerShell
-# source venv/bin/activate     # macOS / Linux
+venv\Scripts\Activate.ps1          # Windows
+# source venv/bin/activate         # macOS / Linux
 
 pip install -r requirements.txt
-
-# Authenticate with Modal (opens browser for login)
-python -m modal setup
+python -m modal setup              # Authenticate (opens browser)
 ```
 
-### 3. Build the frontend
+### 2. Build the frontend
 
 ```bash
 cd ../frontend
 npm install
-npm run build       # Generates static export in frontend/out/
+npm run build
 ```
 
-### 4. Deploy to Modal
+### 3. Deploy
 
 ```bash
 cd ../backend
-venv\Scripts\Activate.ps1
 modal deploy app.py
 ```
 
-On success, Modal prints the deployment URL:
+That's it. Modal prints your live URLs:
+
 ```
-✓ Created web => https://<your-username>--testproject-web.modal.run
-✓ Created Moshi.web => https://<your-username>--testproject-moshi-web.modal.run
+✓ Created web       => https://<you>--testproject-web.modal.run
+✓ Created Moshi.web => https://<you>--testproject-moshi-web.modal.run
 ```
 
-### 5. Use the app
-
-1. Open the **`web`** URL (not the `moshi-web` one) in your browser
-2. Allow microphone access when prompted
-3. Click the mic button and start talking
-4. The AI will respond with voice and live text transcript
+Open the **first URL**, allow mic access, and start talking. 🎤
 
 ---
 
-## Development
+## 💻 Development
 
-To iterate on the frontend locally:
+**Frontend dev server** (hot reload):
 
 ```bash
 cd frontend
-npm run dev         # Starts Next.js dev server at http://localhost:3000
+npm run dev
 ```
 
-To test the backend with hot-reloading:
+**Backend with live reload** (temporary Modal deployment):
 
 ```bash
 cd backend
-modal serve app.py  # Deploys temporarily with live reload
+modal serve app.py
 ```
 
 ---
 
-## Key Design Decisions
+## 💫 The UI
 
-- **Static Export** — The Next.js frontend is pre-built as static HTML/JS and served directly by FastAPI on Modal, avoiding the need for a Node.js server in production
-- **WebSocket Streaming** — Enables real-time, bidirectional audio with minimal latency compared to REST polling
-- **Opus Codec** — Provides high-quality audio compression at low bitrates, ideal for real-time voice over networks
-- **Modal Volumes** — Hugging Face model weights are cached persistently so cold starts only download once
-- **Separate Functions** — The lightweight frontend server runs on CPU while the model runs on GPU, optimizing cost
+Built with **Tailwind CSS 4** and **Framer Motion** for a premium feel:
+
+- **Ambient glow** — Violet/fuchsia gradients in the background
+- **Mic button** — Gradient toggle with expanding ripple rings when recording
+- **Audio visualizer** — Animated equalizer bars that pulse with the conversation
+- **Status badge** — Live connection indicator with a pulsing dot
+- **Transcript panel** — Auto-scrolling with smooth fade-in text
+- **Dark theme** — Easy on the eyes, designed for focus
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to open an issue or submit a pull request.
+
+1. Fork the repo
+2. Create your branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ---
