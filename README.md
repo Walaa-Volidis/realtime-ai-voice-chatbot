@@ -11,6 +11,10 @@ A full-duplex, real-time voice conversation app powered by Moshi, served on serv
 [![Next.js](https://img.shields.io/badge/Frontend-Next.js%2016-black?logo=next.js)](https://nextjs.org/)
 [![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python&logoColor=white)](https://python.org)
 
+<br />
+
+![alt text](image.png)
+
 </div>
 
 ---
