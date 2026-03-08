@@ -6,7 +6,6 @@
 
 A full-duplex, real-time voice conversation app powered by Moshi, served on serverless GPUs via Modal, with a buttery-smooth Next.js frontend.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-violet.svg)](LICENSE)
 [![Modal](https://img.shields.io/badge/Deployed%20on-Modal-black?logo=modal&logoColor=white)](https://modal.com)
 [![Hugging Face](https://img.shields.io/badge/Models-Hugging%20Face-yellow?logo=huggingface)](https://huggingface.co/)
 [![Next.js](https://img.shields.io/badge/Frontend-Next.js%2016-black?logo=next.js)](https://nextjs.org/)
