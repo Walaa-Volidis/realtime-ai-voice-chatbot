@@ -13,7 +13,8 @@ A full-duplex, real-time voice conversation app powered by Moshi, served on serv
 
 <br />
 
-![alt text](image.png)
+<img width="1910" height="911" alt="image" src="https://github.com/user-attachments/assets/da5ef92d-8501-441c-8b04-dcd13ad08760" />
+
 
 </div>
 
