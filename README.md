@@ -122,12 +122,6 @@ Weights are cached in a **Modal Volume** (`model_cache`), so subsequent cold sta
 ```bash
 git clone https://github.com/Walaa-Volidis/realtime-ai-voice-chatbot.git
 cd realtime-ai-voice-chatbot/backend
-
-python -m venv venv
-venv\Scripts\Activate.ps1          # Windows
-# source venv/bin/activate         # macOS / Linux
-
-pip install -r requirements.txt
 python -m modal setup              # Authenticate (opens browser)
 ```
 

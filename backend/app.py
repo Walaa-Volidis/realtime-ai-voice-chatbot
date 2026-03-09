@@ -1,7 +1,5 @@
 from pathlib import Path
-
 import modal
-
 from common import app
 from moshi_service import Moshi
 
