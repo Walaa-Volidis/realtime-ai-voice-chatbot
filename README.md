@@ -15,7 +15,6 @@ A full-duplex, real-time voice conversation app powered by Moshi, served on serv
 
 <img width="1910" height="911" alt="image" src="https://github.com/user-attachments/assets/da5ef92d-8501-441c-8b04-dcd13ad08760" />
 
-
 </div>
 
 ---
@@ -123,6 +122,7 @@ Weights are cached in a **Modal Volume** (`model_cache`), so subsequent cold sta
 ```bash
 git clone https://github.com/Walaa-Volidis/realtime-ai-voice-chatbot.git
 cd realtime-ai-voice-chatbot/backend
+pip install modal
 python -m modal setup              # Authenticate (opens browser)
 ```
 
